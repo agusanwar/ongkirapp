@@ -1,5 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:ongkirapp/app/modules/home/courier_model.dart';
 
 class HomeController extends GetxController {
   var hiddenKotaAsal = true.obs;
@@ -16,15 +21,51 @@ class HomeController extends GetxController {
 
   late TextEditingController weightControler;
 
+  void ongkoskirim() async {
+    Uri url = Uri.parse("https://api.rajaongkir.com/starter/cost");
+    try {
+      final response = await http.post(url, body: {
+        "origin": "$kotaIdAsal",
+        "destination": "$kotaIdTujuan",
+        "weight": "$weight",
+        "courier": "$kurir",
+      }, headers: {
+        "content-type": "application/x-www-form-urlencoded",
+        "Key": "64733b60c80d5c2d4903fbdafbeab0fe"
+      });
+      var data = jsonDecode(response.body) as Map<String, dynamic>;
+      var resaults = data['rajaongkir']['results'] as List<dynamic>;
+
+      var listAllCourier = Courier.fromJsonList(resaults);
+      var courier = listAllCourier[0];
+      // print(listAllCourier[0]);
+      Get.defaultDialog(
+        title: courier.name!,
+        content: Column(
+          children: courier.costs!.map(
+            (e) => ListTile(
+              title: Text("${e.service}"),
+              subtitle: Text("Rp. ${e.cost![0].value}"),
+              trailing: Text(courier.code == "pos" ? "${e.cost![0].etd}" : "${e.cost![0].etd} HARI" ),
+            ),
+          ).toList(),
+        ),
+      );
+    } catch (err) {
+      print(err);
+      Get.defaultDialog(
+        title: "Gagal",
+        middleText: err.toString(),
+      );
+    }
+  }
+
   // validasi cek ongkir
-  void showButton(){
-    if (kotaIdAsal != 0 &&
-        kotaIdTujuan != 0 && 
-        weight > 0 &&
-        kurir != "") {
-        hiddenButton.value = false;
-      }else{
-       hiddenButton.value = true;
+  void showButton() {
+    if (kotaIdAsal != 0 && kotaIdTujuan != 0 && weight > 0 && kurir != "") {
+      hiddenButton.value = false;
+    } else {
+      hiddenButton.value = true;
     }
   }
 

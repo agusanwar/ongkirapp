@@ -61,21 +61,18 @@ class Cities extends GetView<HomeController> {
             if (type == "asal") {
               controller.kotaIdAsal.value = int.parse(city.cityId!);
             } else {
-             controller.kotaIdTujuan.value = int.parse(city.cityId!);
+              controller.kotaIdTujuan.value = int.parse(city.cityId!);
             }
           } else {
             if (type == "asal") {
               print("Tidak memilih kota / kabupaten asal");
+              controller.kotaIdAsal.value = 0;
             } else {
               print("Tidak memilih kota / kabupaten tujuan");
+              controller.kotaIdTujuan.value = 0;
             }
           }
-          //province tidak null
-          if (city != null) {
-            print(city.cityName!);
-          } else {
-            print("Tidak memilih kota / kabupaten");
-          }
+          controller.showButton();
         },
         showSearchBox: true,
         popupItemBuilder: (context, item, isSelected) {

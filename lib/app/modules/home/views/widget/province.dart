@@ -67,6 +67,7 @@ class Provicies extends GetView<HomeController> {
               controller.provinceIdTujuan.value = 0;
             }
           }
+          controller.showButton();
         },
         showSearchBox: true,
         popupItemBuilder: (context, item, isSelected) {
