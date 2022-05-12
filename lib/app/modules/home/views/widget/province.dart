@@ -9,30 +9,27 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:ongkirapp/app/modules/home/province_model.dart';
 
 class Provicies extends GetView<HomeController> {
-  const Provicies({
-    Key? key,
-  }) : super(key: key);
+  const Provicies({Key? key, required this.type}) : super(key: key);
+
+  final String type;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(
-        bottom: 20
-      ),
+      padding: const EdgeInsets.only(bottom: 20),
       child: DropdownSearch<Province>(
         showClearButton: true,
         dropdownSearchDecoration: InputDecoration(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          labelText: "Provice",
+          labelText: type == "asal" ? "Provice Asal" : "Provice Tujuan",
         ),
         onFind: (String? filter) async {
-          Uri url =
-              Uri.parse("https://api.rajaongkir.com/starter/province");
+          Uri url = Uri.parse("https://api.rajaongkir.com/starter/province");
           try {
-            final response = await http.get(url,
-                headers: {"Key": "64733b60c80d5c2d4903fbdafbeab0fe"});
+            final response = await http
+                .get(url, headers: {"Key": "64733b60c80d5c2d4903fbdafbeab0fe"});
 
             var data = jsonDecode(response.body) as Map<String, dynamic>;
 
@@ -42,8 +39,7 @@ class Provicies extends GetView<HomeController> {
               throw data['rajaongkir']['status']['description'];
             }
 
-            var listAllProvice =
-                data['rajaongkir']['results'] as List<dynamic>;
+            var listAllProvice = data['rajaongkir']['results'] as List<dynamic>;
             var models = Province.fromJsonList(listAllProvice);
             return models;
           } catch (e) {
@@ -51,14 +47,25 @@ class Provicies extends GetView<HomeController> {
             return List<Province>.empty();
           }
         },
-         onChanged: (province) {
+        onChanged: (province) {
           //province tidak null
           if (province != null) {
-            controller.hiddenKota.value = false;
-            controller.provinceId.value = int.parse(province.provinceId!);
-          } else{
-             controller.hiddenKota.value = true;
-             controller.provinceId.value = 0;
+            if (type == "asal") {
+              controller.hiddenKotaAsal.value = false;
+              controller.provinceIdAsal.value = int.parse(province.provinceId!);
+            } else {
+              controller.hiddenKotaTujuan.value = false;
+              controller.provinceIdTujuan.value =
+                  int.parse(province.provinceId!);
+            }
+          } else {
+            if (type == "asal") {
+              controller.hiddenKotaAsal.value = true;
+              controller.provinceIdAsal.value = 0;
+            } else {
+              controller.hiddenKotaTujuan.value = true;
+              controller.provinceIdTujuan.value = 0;
+            }
           }
         },
         showSearchBox: true,
