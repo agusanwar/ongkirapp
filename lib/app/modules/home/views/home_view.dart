@@ -20,6 +20,15 @@ class HomeView extends GetView<HomeController> {
         child: ListView(
           padding: EdgeInsets.all(20),
           children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Image.asset("assets/icon/icon_ai.png", width: 80, height: 80,),
+              ],
+            ),
+            SizedBox(
+              height: 20,
+            ),
             Provicies(
               type: "asal",
             ),
@@ -82,6 +91,9 @@ class HomeView extends GetView<HomeController> {
                       },
                       child: Text('Cek Ongkos Kirim'),
                       style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)
+                        ),
                           padding: EdgeInsets.symmetric(vertical: 20),
                           primary: Color.fromARGB(255, 13, 40, 173)),
                     ),
